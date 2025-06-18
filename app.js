@@ -1,1 +1,2 @@
-// JS logic placeholder
+
+console.log("App NeoHospital caricata correttamente!");
