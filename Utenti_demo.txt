@@ -1,0 +1,8 @@
+medico@demo.com
+demo1234
+
+infermiere@demo.com
+demo1234
+
+admin@demo.com
+demo1234

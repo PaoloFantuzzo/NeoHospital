@@ -1,0 +1,1 @@
+Questa è una versione dimostrativa della Web App NeoHospital.
