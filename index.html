@@ -1,17 +1,23 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NeoHospital</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="app.js"></script>
 </head>
 <body>
-  <div id="app">
-    <h1>Benvenuto su NeoHospital</h1>
-    <p>Interfaccia base caricata correttamente.</p>
-    <script src="app.js"></script>
-  </div>
+  <nav>
+    <h1>NeoHospital</h1>
+    <ul>
+      <li><a href="#" onclick="navigate('home')">Home</a></li>
+      <li><a href="#" onclick="navigate('anagrafica')">Anagrafica Pazienti</a></li>
+      <li><a href="#" onclick="navigate('ricoveri')">Ricoveri</a></li>
+      <li><a href="#" onclick="navigate('terapia')">Terapia</a></li>
+      <li><a href="#" onclick="navigate('diario')">Diario Clinico</a></li>
+    </ul>
+  </nav>
+  <main id="content"><h2>Caricamento...</h2></main>
 </body>
 </html>
