@@ -7,16 +7,17 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
   <style>
-    #test-result {
+    #page-indicator {
       position: fixed;
       bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
+      right: 10px;
+      background: rgba(50, 50, 50, 0.8);
+      color: #fff;
       padding: 8px 12px;
       border-radius: 6px;
       font-family: monospace;
-      z-index: 9999;
+      z-index: 10000;
+      user-select: none;
     }
   </style>
 </head>
@@ -101,12 +102,128 @@
     </div>
   </section>
 
-  <div id="test-result"></div>
+  <div id="page-indicator">Pagina attiva: home</div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const views = document.querySelectorAll('.view');
-      document.getElementById('test-result').textContent = `Sezioni .view trovate: ${views.length}`;
+      const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
+      const supabase = window.supabase;
+      const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+      let schedaAperta = null;
+      let subSchedaAperta = null;
+
+      window.navigate = function (page) {
+        const sezioni = document.querySelectorAll(".view");
+        sezioni.forEach(sec => {
+          sec.style.display = (sec.id === page) ? "block" : "none";
+        });
+        document.getElementById('page-indicator').textContent = 'Pagina attiva: ' + page;
+
+        if (page === "ricoveri") {
+          loadRicoveri();
+        }
+
+        if (page === "home") {
+          schedaAperta = null;
+          subSchedaAperta = null;
+          document.getElementById("cartella-ricovero").style.display = "none";
+        }
+
+        if (page !== "cartella-ricovero") {
+          document.getElementById("cartella-ricovero").style.display = "none";
+        }
+      };
+
+      window.openScheda = function (id) {
+        if (schedaAperta) {
+          document.getElementById(schedaAperta).style.display = "none";
+        }
+        schedaAperta = id;
+        document.getElementById(id).style.display = "block";
+
+        if (subSchedaAperta) {
+          document.getElementById(subSchedaAperta).style.display = "none";
+          subSchedaAperta = null;
+        }
+      };
+
+      window.openSubScheda = function (id) {
+        if (subSchedaAperta) {
+          document.getElementById(subSchedaAperta).style.display = "none";
+        }
+        subSchedaAperta = id;
+        document.getElementById(id).style.display = "block";
+      };
+
+      async function loadRicoveri() {
+        const { data, error } = await client
+          .from("ricoveri")
+          .select("*, paziente:anagrafica_pazienti(*)");
+        const tbody = document.getElementById("ricoveri-body");
+        tbody.innerHTML = "";
+
+        if (error) {
+          tbody.innerHTML = `<tr><td colspan="5">Errore caricamento ricoveri: ${error.message}</td></tr>`;
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='5'>Nessun ricovero attivo</td></tr>";
+          return;
+        }
+
+        data.forEach((ricovero) => {
+          const riga = document.createElement("tr");
+          riga.innerHTML = `
+            <td>${ricovero.paziente.nome}</td>
+            <td>${ricovero.paziente.cognome}</td>
+            <td>${ricovero.reparto || ""}</td>
+            <td>${ricovero.stanza || ""} / ${ricovero.letto || ""}</td>
+            <td><button onclick='apriCartellaRicovero(${JSON.stringify(
+              ricovero
+            ).replace(/'/g, "\\'")})'>Apri</button></td>
+          `;
+          tbody.appendChild(riga);
+        });
+      }
+
+      window.apriCartellaRicovero = function (ricovero) {
+        navigate("cartella-ricovero");
+
+        const anagraficaDiv = document.getElementById("scheda-anagrafica");
+        anagraficaDiv.innerHTML = `
+          <p><strong>Nome:</strong> ${ricovero.paziente.nome}</p>
+          <p><strong>Cognome:</strong> ${ricovero.paziente.cognome}</p>
+          <p><strong>Codice Fiscale:</strong> ${ricovero.paziente.codice_fiscale}</p>
+          <p><strong>Reparto:</strong> ${ricovero.reparto || ""}</p>
+          <p><strong>Stanza:</strong> ${ricovero.stanza || ""}</p>
+          <p><strong>Letto:</strong> ${ricovero.letto || ""}</p>
+        `;
+
+        openScheda("scheda-anagrafica");
+      };
+
+      const links = [
+        ["home-link", "home"],
+        ["anagrafica-link", "pazienti"],
+        ["ricoveri-link", "ricoveri"],
+        ["agenda-link", "agenda"],
+        ["farmaci-link", "farmaci"],
+      ];
+
+      links.forEach(([id, page]) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("click", (e) => {
+            e.preventDefault();
+            navigate(page);
+          });
+        }
+      });
+
+      navigate("home");
     });
   </script>
 
