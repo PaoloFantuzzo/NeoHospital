@@ -1,8 +1,27 @@
+// Connessione a Supabase
 const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
 function navigate(page) {
-  async function loadPazienti() {
+  const content = document.getElementById('content');
+
+  if (page === 'home') {
+    content.innerHTML = '<h2>Benvenuto in NeoHospital</h2><p>Seleziona una sezione dal menu a sinistra.</p>';
+  } else if (page === 'anagrafica') {
+    content.innerHTML = `
+      <h2>Anagrafica Pazienti</h2>
+      <button onclick="showFormPaziente()" style="margin-bottom: 10px;">+ Nuovo Paziente</button>
+      <div id="form-container"></div>
+      <p>Caricamento dati...</p>
+    `;
+    loadPazienti();
+  } else {
+    content.innerHTML = `<h2>${page}</h2><p>Contenuto in costruzione...</p>`;
+  }
+}
+
+async function loadPazienti() {
   const { data, error } = await supabase.from('anagrafica_pazienti').select('*');
 
   if (error) {
@@ -12,7 +31,7 @@ function navigate(page) {
   }
 
   if (data.length === 0) {
-    document.getElementById('content').innerHTML = '<p>Nessun paziente trovato.</p>';
+    document.getElementById('content').innerHTML += '<p>Nessun paziente trovato.</p>';
     return;
   }
 
@@ -22,23 +41,46 @@ function navigate(page) {
   });
   table += '</table>';
 
-  document.getElementById('content').innerHTML = '<h2>Anagrafica Pazienti</h2>' + table;
+  document.getElementById('content').innerHTML += table;
 }
 
-  const content = document.getElementById('content');
-  if (page === 'home') {
-    content.innerHTML = '<h2>Benvenuto su NeoHospital</h2><p>Seleziona una sezione.</p>';
-  else if (page === 'anagrafica') {
-  content.innerHTML = '<h2>Anagrafica Pazienti</h2><p>Caricamento dati...</p>';
+function showFormPaziente() {
+  const formHTML = `
+    <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+      <label>Cognome: <input type="text" id="cognome"></label><br><br>
+      <label>Nome: <input type="text" id="nome"></label><br><br>
+      <label>Codice Fiscale: <input type="text" id="codice_fiscale"></label><br><br>
+      <button onclick="salvaPaziente()">Salva</button>
+      <button onclick="annullaForm()">Annulla</button>
+    </div>
+  `;
+  document.getElementById('form-container').innerHTML = formHTML;
+}
+
+function annullaForm() {
+  document.getElementById('form-container').innerHTML = '';
+}
+
+async function salvaPaziente() {
+  const cognome = document.getElementById('cognome').value.trim();
+  const nome = document.getElementById('nome').value.trim();
+  const codiceFiscale = document.getElementById('codice_fiscale').value.trim();
+
+  if (!cognome || !nome || !codiceFiscale) {
+    alert('Compila tutti i campi.');
+    return;
+  }
+
+  const { error } = await supabase.from('anagrafica_pazienti').insert([
+    { cognome, nome, codice_fiscale: codiceFiscale }
+  ]);
+
+  if (error) {
+    alert('Errore durante il salvataggio.');
+    console.error(error);
+    return;
+  }
+
+  annullaForm();
   loadPazienti();
 }
-  } else if (page === 'ricoveri') {
-    content.innerHTML = '<h2>Ricoveri</h2><p>Visualizzazione ricoveri in corso...</p>';
-  } else if (page === 'terapia') {
-    content.innerHTML = '<h2>Terapia</h2><p>Lista delle terapie assegnate...</p>';
-  } else if (page === 'diario') {
-    content.innerHTML = '<h2>Diario Clinico</h2><p>Note cliniche in corso...</p>';
-  }
-}
-document.addEventListener('DOMContentLoaded', () => navigate('home'));
-Funzione loadPazienti aggiunta
