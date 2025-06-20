@@ -1,231 +1,59 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NeoHospital</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
-  <style>
-    #page-indicator {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(50, 50, 50, 0.8);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-family: monospace;
-      z-index: 10000;
-      user-select: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Test Navigazione Base</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  .sidebar { float: left; width: 150px; }
+  .sidebar ul { list-style: none; padding: 0; }
+  .sidebar li { margin: 10px 0; }
+  .sidebar a { text-decoration: none; color: blue; cursor: pointer; }
+  .view { margin-left: 170px; padding: 10px; border: 1px solid #ccc; display: none; }
+  .view.active { display: block; }
+</style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <ul>
-      <li><a href="#" id="home-link">Home</a></li>
-      <li><a href="#" id="anagrafica-link">Anagrafica Pazienti</a></li>
-      <li><a href="#" id="ricoveri-link">Ricoveri</a></li>
-      <li><a href="#" id="agenda-link">Agenda</a></li>
-      <li><a href="#" id="farmaci-link">Farmaci</a></li>
-    </ul>
-  </aside>
+<div class="sidebar">
+  <ul>
+    <li><a id="home-link">Home</a></li>
+    <li><a id="pazienti-link">Anagrafica Pazienti</a></li>
+    <li><a id="ricoveri-link">Ricoveri</a></li>
+    <li><a id="agenda-link">Agenda</a></li>
+    <li><a id="farmaci-link">Farmaci</a></li>
+  </ul>
+</div>
 
-  <section id="home" class="view">
-    <h2>Benvenuto in NeoHospital</h2>
-  </section>
+<div id="home" class="view active"><h2>Home</h2><p>Benvenuto in NeoHospital</p></div>
+<div id="pazienti" class="view"><h2>Anagrafica Pazienti</h2><p>Qui i dati dei pazienti.</p></div>
+<div id="ricoveri" class="view"><h2>Ricoveri</h2><p>Lista ricoveri attivi.</p></div>
+<div id="agenda" class="view"><h2>Agenda</h2><p>Agenda eventi e appuntamenti.</p></div>
+<div id="farmaci" class="view"><h2>Farmaci</h2><p>Elenco farmaci.</p></div>
 
-  <section id="pazienti" class="view" style="display:none">
-    <h2>Anagrafica Pazienti</h2>
-  </section>
+<script>
+  const links = [
+    { id: 'home-link', view: 'home' },
+    { id: 'pazienti-link', view: 'pazienti' },
+    { id: 'ricoveri-link', view: 'ricoveri' },
+    { id: 'agenda-link', view: 'agenda' },
+    { id: 'farmaci-link', view: 'farmaci' }
+  ];
 
-  <section id="ricoveri" class="view" style="display:none">
-    <h2>Ricoveri Attivi</h2>
-    <table id="tabella-ricoveri">
-      <thead>
-        <tr>
-          <th>Nome</th><th>Cognome</th><th>Reparto</th><th>Letto</th><th></th>
-        </tr>
-      </thead>
-      <tbody id="ricoveri-body">
-      </tbody>
-    </table>
-  </section>
-
-  <section id="agenda" class="view" style="display:none">
-    <h2>Agenda</h2>
-  </section>
-
-  <section id="farmaci" class="view" style="display:none">
-    <h2>Farmaci</h2>
-  </section>
-
-  <section id="cartella-ricovero" class="view" style="display:none">
-    <h2>Cartella Ricovero</h2>
-    <div class="tabs">
-      <button onclick="openScheda('scheda-anagrafica')">Anagrafica</button>
-      <button onclick="openScheda('scheda-terapia')">Terapia</button>
-      <button onclick="openScheda('scheda-parametri')">Parametri Vitali</button>
-      <button onclick="openScheda('scheda-diari')">Diari</button>
-      <button onclick="openScheda('scheda-valutazioni')">Schede di Valutazione</button>
-    </div>
-    <div id="scheda-anagrafica" class="scheda" style="display:none"></div>
-    <div id="scheda-terapia" class="scheda" style="display:none"></div>
-    <div id="scheda-parametri" class="scheda" style="display:none"></div>
-    <div id="scheda-diari" class="scheda" style="display:none">
-      <div class="sub-tabs">
-        <button onclick="openSubScheda('diario-medico')">Medico</button>
-        <button onclick="openSubScheda('diario-infermiere')">Infermiere</button>
-        <button onclick="openSubScheda('diario-fisioterapista')">Fisioterapista</button>
-        <button onclick="openSubScheda('diario-logopedista')">Logopedista</button>
-        <button onclick="openSubScheda('diario-psicologo')">Psicologo</button>
-      </div>
-      <div id="diario-medico" class="sub-scheda" style="display:none"></div>
-      <div id="diario-infermiere" class="sub-scheda" style="display:none"></div>
-      <div id="diario-fisioterapista" class="sub-scheda" style="display:none"></div>
-      <div id="diario-logopedista" class="sub-scheda" style="display:none"></div>
-      <div id="diario-psicologo" class="sub-scheda" style="display:none"></div>
-    </div>
-    <div id="scheda-valutazioni" class="scheda" style="display:none">
-      <div class="sub-tabs">
-        <button onclick="openSubScheda('valutazione-barthel')">Barthel</button>
-        <button onclick="openSubScheda('valutazione-brass')">Brass</button>
-        <button onclick="openSubScheda('valutazione-cadute')">Rischio Cadute</button>
-        <button onclick="openSubScheda('valutazione-braden')">Braden</button>
-      </div>
-      <div id="valutazione-barthel" class="sub-scheda" style="display:none"></div>
-      <div id="valutazione-brass" class="sub-scheda" style="display:none"></div>
-      <div id="valutazione-cadute" class="sub-scheda" style="display:none"></div>
-      <div id="valutazione-braden" class="sub-scheda" style="display:none"></div>
-    </div>
-  </section>
-
-  <div id="page-indicator">Pagina attiva: home</div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
-      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
-      const supabase = window.supabase;
-      const client = supabase.createClient(supabaseUrl, supabaseKey);
-
-      let schedaAperta = null;
-      let subSchedaAperta = null;
-
-      window.navigate = function (page) {
-        const sezioni = document.querySelectorAll(".view");
-        sezioni.forEach(sec => {
-          sec.style.display = (sec.id === page) ? "block" : "none";
-        });
-        document.getElementById('page-indicator').textContent = 'Pagina attiva: ' + page;
-
-        if (page === "ricoveri") {
-          loadRicoveri();
-        }
-
-        if (page === "home") {
-          schedaAperta = null;
-          subSchedaAperta = null;
-          document.getElementById("cartella-ricovero").style.display = "none";
-        }
-
-        if (page !== "cartella-ricovero") {
-          document.getElementById("cartella-ricovero").style.display = "none";
-        }
-      };
-
-      window.openScheda = function (id) {
-        if (schedaAperta) {
-          document.getElementById(schedaAperta).style.display = "none";
-        }
-        schedaAperta = id;
-        document.getElementById(id).style.display = "block";
-
-        if (subSchedaAperta) {
-          document.getElementById(subSchedaAperta).style.display = "none";
-          subSchedaAperta = null;
-        }
-      };
-
-      window.openSubScheda = function (id) {
-        if (subSchedaAperta) {
-          document.getElementById(subSchedaAperta).style.display = "none";
-        }
-        subSchedaAperta = id;
-        document.getElementById(id).style.display = "block";
-      };
-
-      async function loadRicoveri() {
-        const { data, error } = await client
-          .from("ricoveri")
-          .select("*, paziente:anagrafica_pazienti(*)");
-        const tbody = document.getElementById("ricoveri-body");
-        tbody.innerHTML = "";
-
-        if (error) {
-          tbody.innerHTML = `<tr><td colspan="5">Errore caricamento ricoveri: ${error.message}</td></tr>`;
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          tbody.innerHTML = "<tr><td colspan='5'>Nessun ricovero attivo</td></tr>";
-          return;
-        }
-
-        data.forEach((ricovero) => {
-          const riga = document.createElement("tr");
-          riga.innerHTML = `
-            <td>${ricovero.paziente.nome}</td>
-            <td>${ricovero.paziente.cognome}</td>
-            <td>${ricovero.reparto || ""}</td>
-            <td>${ricovero.stanza || ""} / ${ricovero.letto || ""}</td>
-            <td><button onclick='apriCartellaRicovero(${JSON.stringify(
-              ricovero
-            ).replace(/'/g, "\\'")})'>Apri</button></td>
-          `;
-          tbody.appendChild(riga);
-        });
-      }
-
-      window.apriCartellaRicovero = function (ricovero) {
-        navigate("cartella-ricovero");
-
-        const anagraficaDiv = document.getElementById("scheda-anagrafica");
-        anagraficaDiv.innerHTML = `
-          <p><strong>Nome:</strong> ${ricovero.paziente.nome}</p>
-          <p><strong>Cognome:</strong> ${ricovero.paziente.cognome}</p>
-          <p><strong>Codice Fiscale:</strong> ${ricovero.paziente.codice_fiscale}</p>
-          <p><strong>Reparto:</strong> ${ricovero.reparto || ""}</p>
-          <p><strong>Stanza:</strong> ${ricovero.stanza || ""}</p>
-          <p><strong>Letto:</strong> ${ricovero.letto || ""}</p>
-        `;
-
-        openScheda("scheda-anagrafica");
-      };
-
-      const links = [
-        ["home-link", "home"],
-        ["anagrafica-link", "pazienti"],
-        ["ricoveri-link", "ricoveri"],
-        ["agenda-link", "agenda"],
-        ["farmaci-link", "farmaci"],
-      ];
-
-      links.forEach(([id, page]) => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener("click", (e) => {
-            e.preventDefault();
-            navigate(page);
-          });
-        }
-      });
-
-      navigate("home");
+  function navigateTo(viewId) {
+    document.querySelectorAll('.view').forEach(div => {
+      div.classList.toggle('active', div.id === viewId);
     });
-  </script>
+  }
+
+  links.forEach(link => {
+    const el = document.getElementById(link.id);
+    el.addEventListener('click', () => {
+      navigateTo(link.view);
+    });
+  });
+</script>
 
 </body>
 </html>
