@@ -105,6 +105,7 @@ window.onload = function () {
           <select id="forma_farmaceutica">
             <option value="">-- Seleziona --</option>
             <option value="cpr">cpr</option>
+            <option value="cpr riv">cpr riv</option>
             <option value="cps">cps</option>
             <option value="gtt">gtt</option>
             <option value="cpr orodispersibile">cpr orodispersibile</option>
@@ -112,6 +113,12 @@ window.onload = function () {
             <option value="flac">flac</option>
             <option value="supp">supp</option>
             <option value="cerotto">cerotto</option>
+          </select>
+        </label><br><br>
+        <label>Triturabile: 
+          <select id="triturabile">
+            <option value="Sì">Sì</option>
+            <option value="No">No</option>
           </select>
         </label><br><br>
         <label><input type="checkbox" id="nominativo"> Nominativo (per singolo paziente)</label><br><br>
@@ -132,6 +139,7 @@ window.onload = function () {
   window.salvaFarmaco = async function () {
     const principio = document.getElementById('principio_attivo').value.trim();
     const forma = document.getElementById('forma_farmaceutica').value;
+    const triturabile = document.getElementById('triturabile').value;
     const nominativo = document.getElementById('nominativo').checked;
     const unita = parseInt(document.getElementById('unita_per_confezione').value);
     const raccomandazioni = document.getElementById('raccomandazioni').value.trim();
@@ -146,6 +154,7 @@ window.onload = function () {
       {
         principio_attivo: principio,
         forma_farmaceutica: forma || null,
+        triturabile,
         nominativo,
         unita_per_confezione: isNaN(unita) ? null : unita,
         raccomandazioni: raccomandazioni || null,
@@ -178,11 +187,12 @@ window.onload = function () {
       return;
     }
 
-    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th><th>Raccomandazioni</th><th>Avvertenze Operatori</th></tr>';
+    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Triturabile</th><th>Nominativo</th><th>Unità/Conf.</th><th>Raccomandazioni</th><th>Avvertenze Operatori</th></tr>';
     data.forEach(f => {
       table += `<tr>
         <td>${f.principio_attivo}</td>
         <td>${f.forma_farmaceutica || ''}</td>
+        <td>${f.triturabile}</td>
         <td>${f.nominativo ? '✔️' : ''}</td>
         <td>${f.unita_per_confezione || ''}</td>
         <td>${f.raccomandazioni || ''}</td>
