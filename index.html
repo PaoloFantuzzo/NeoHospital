@@ -2,10 +2,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NeoHospital</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Libreria Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 </head>
 <body>
@@ -33,15 +32,10 @@
     <table id="tabella-ricoveri">
       <thead>
         <tr>
-          <th>Nome</th>
-          <th>Cognome</th>
-          <th>Reparto</th>
-          <th>Letto</th>
-          <th></th>
+          <th>Nome</th><th>Cognome</th><th>Reparto</th><th>Letto</th><th></th>
         </tr>
       </thead>
       <tbody id="ricoveri-body">
-        <!-- Popolamento dinamico -->
       </tbody>
     </table>
   </section>
@@ -63,11 +57,9 @@
       <button onclick="openScheda('scheda-diari')">Diari</button>
       <button onclick="openScheda('scheda-valutazioni')">Schede di Valutazione</button>
     </div>
-
     <div id="scheda-anagrafica" class="scheda" style="display:none"></div>
     <div id="scheda-terapia" class="scheda" style="display:none"></div>
     <div id="scheda-parametri" class="scheda" style="display:none"></div>
-
     <div id="scheda-diari" class="scheda" style="display:none">
       <div class="sub-tabs">
         <button onclick="openSubScheda('diario-medico')">Medico</button>
@@ -82,7 +74,6 @@
       <div id="diario-logopedista" class="sub-scheda" style="display:none"></div>
       <div id="diario-psicologo" class="sub-scheda" style="display:none"></div>
     </div>
-
     <div id="scheda-valutazioni" class="scheda" style="display:none">
       <div class="sub-tabs">
         <button onclick="openSubScheda('valutazione-barthel')">Barthel</button>
