@@ -50,30 +50,6 @@
   <div id="content"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="app.js"></script>
-  <script>
-    window.onload = function () {
-      const links = [
-        ['home-link', 'home'],
-        ['anagrafica-link', 'anagrafica'],
-        ['ricoveri-link', 'ricoveri'],
-        ['terapia-link', 'terapia'],
-        ['diario-link', 'diario'],
-        ['parametri-link', 'parametri'],
-        ['schede-link', 'schede'],
-        ['agenda-link', 'agenda'],
-        ['farmaci-link', 'farmaci']
-      ];
-      links.forEach(([id, page]) => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (typeof navigate === 'function') navigate(page);
-          });
-        }
-      });
-    }
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
