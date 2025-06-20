@@ -5,6 +5,7 @@ window.onload = function () {
 
   function navigate(page) {
     const content = document.getElementById('content');
+    document.getElementById('content').innerHTML = '';
 
     if (page === 'home') {
       content.innerHTML = '<h2>Benvenuto in NeoHospital</h2><p>Seleziona una sezione dal menu a sinistra.</p>';
@@ -13,7 +14,7 @@ window.onload = function () {
         <h2>Anagrafica Pazienti</h2>
         <button onclick="showFormPaziente()" style="margin-bottom: 10px;">+ Nuovo Paziente</button>
         <div id="form-container"></div>
-        <p>Caricamento dati...</p>
+        <div id="pazienti-table"><p>Caricamento dati...</p></div>
       `;
       loadPazienti();
     } else {
@@ -24,14 +25,16 @@ window.onload = function () {
   async function loadPazienti() {
     const { data, error } = await supabase.from('anagrafica_pazienti').select('*');
 
+    const container = document.getElementById('pazienti-table');
+
     if (error) {
-      document.getElementById('content').innerHTML = '<p>Errore nel caricamento dati.</p>';
+      container.innerHTML = '<p>Errore nel caricamento dati.</p>';
       console.error(error);
       return;
     }
 
     if (data.length === 0) {
-      document.getElementById('content').innerHTML += '<p>Nessun paziente trovato.</p>';
+      container.innerHTML = '<p>Nessun paziente trovato.</p>';
       return;
     }
 
@@ -41,7 +44,7 @@ window.onload = function () {
     });
     table += '</table>';
 
-    document.getElementById('content').innerHTML += table;
+    container.innerHTML = table;
   }
 
   function showFormPaziente() {
@@ -86,6 +89,9 @@ window.onload = function () {
   }
 
   window.showFormPaziente = showFormPaziente;
+  window.annullaForm = annullaForm;
   window.navigate = navigate;
+
+  // Avvio iniziale
   navigate('home');
 };
