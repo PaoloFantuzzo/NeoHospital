@@ -1,12 +1,43 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NeoHospital</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- CONTENUTO HTML SARÀ QUI INSERITO DINAMICAMENTE O AGGIUNTO IN SEGUITO -->
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoHospital</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <aside class="sidebar">
+    <ul>
+      <li><a href="#" onclick="navigate('home')">Home</a></li>
+      <li><a href="#" onclick="navigate('pazienti')">Anagrafica Pazienti</a></li>
+      <li><a href="#" onclick="navigate('ricoveri')">Ricoveri</a></li>
+      <li><a href="#" onclick="navigate('agenda')">Agenda</a></li>
+      <li><a href="#" onclick="navigate('farmaci')">Farmaci</a></li>
+    </ul>
+  </aside>
+
+  <section id="home" class="view">
+    <h2>Benvenuto in NeoHospital</h2>
+  </section>
+
+  <section id="pazienti" class="view" style="display:none">
+    <h2>Anagrafica Pazienti</h2>
+  </section>
+
+  <section id="ricoveri" class="view" style="display:none">
+    <h2>Ricoveri Attivi</h2>
+  </section>
+
+  <section id="agenda" class="view" style="display:none">
+    <h2>Agenda</h2>
+  </section>
+
+  <section id="farmaci" class="view" style="display:none">
+    <h2>Farmaci</h2>
+  </section>
+
+  <script src="app.js"></script>
+</body>
 </html>
