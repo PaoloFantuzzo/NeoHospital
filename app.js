@@ -3,6 +3,8 @@ window.onload = function () {
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
+  let farmacoInModifica = null;
+
   function navigate(page) {
     const content = document.getElementById('content');
     document.getElementById('content').innerHTML = '';
@@ -97,10 +99,12 @@ window.onload = function () {
   window.showFormPaziente = showFormPaziente;
   window.annullaForm = annullaForm;
 
-  function showFormFarmaco() {
+  function showFormFarmaco(farmaco = null) {
+    farmacoInModifica = farmaco;
+
     const formHTML = `
       <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-        <label>Principio Attivo: <input type="text" id="principio_attivo"></label><br><br>
+        <label>Principio Attivo: <input type="text" id="principio_attivo" value="${farmaco ? farmaco.principio_attivo : ''}"></label><br><br>
         <label>Forma Farmaceutica: 
           <select id="forma_farmaceutica">
             <option value="">-- Seleziona --</option>
@@ -121,19 +125,25 @@ window.onload = function () {
             <option value="No">No</option>
           </select>
         </label><br><br>
-        <label><input type="checkbox" id="nominativo"> Nominativo (per singolo paziente)</label><br><br>
-        <label>Unità per Confezione: <input type="number" id="unita_per_confezione"></label><br><br>
-        <label>Raccomandazioni: <textarea id="raccomandazioni"></textarea></label><br><br>
-        <label>Avvertenze per Operatori: <textarea id="avvertenze_operatori"></textarea></label><br><br>
-        <button onclick="salvaFarmaco()">Salva</button>
+        <label><input type="checkbox" id="nominativo" ${farmaco && farmaco.nominativo ? 'checked' : ''}> Nominativo (per singolo paziente)</label><br><br>
+        <label>Unità per Confezione: <input type="number" id="unita_per_confezione" value="${farmaco ? farmaco.unita_per_confezione || '' : ''}"></label><br><br>
+        <label>Raccomandazioni: <textarea id="raccomandazioni">${farmaco ? farmaco.raccomandazioni || '' : ''}</textarea></label><br><br>
+        <label>Avvertenze per Operatori: <textarea id="avvertenze_operatori">${farmaco ? farmaco.avvertenze_operatori || '' : ''}</textarea></label><br><br>
+        <button onclick="salvaFarmaco()">${farmaco ? 'Aggiorna' : 'Salva'}</button>
         <button onclick="annullaFormFarmaco()">Annulla</button>
       </div>
     `;
     document.getElementById('form-farmaco').innerHTML = formHTML;
+
+    if (farmaco) {
+      document.getElementById('forma_farmaceutica').value = farmaco.forma_farmaceutica || '';
+      document.getElementById('triturabile').value = farmaco.triturabile || 'Sì';
+    }
   }
 
   function annullaFormFarmaco() {
     document.getElementById('form-farmaco').innerHTML = '';
+    farmacoInModifica = null;
   }
 
   window.salvaFarmaco = async function () {
@@ -145,22 +155,22 @@ window.onload = function () {
     const raccomandazioni = document.getElementById('raccomandazioni').value.trim();
     const avvertenze = document.getElementById('avvertenze_operatori').value.trim();
 
-    if (!principio) {
-      alert('Il principio attivo è obbligatorio.');
-      return;
-    }
+    const dati = {
+      principio_attivo: principio,
+      forma_farmaceutica: forma || null,
+      triturabile,
+      nominativo,
+      unita_per_confezione: isNaN(unita) ? null : unita,
+      raccomandazioni: raccomandazioni || null,
+      avvertenze_operatori: avvertenze || null
+    };
 
-    const { error } = await client.from('farmaci').insert([
-      {
-        principio_attivo: principio,
-        forma_farmaceutica: forma || null,
-        triturabile,
-        nominativo,
-        unita_per_confezione: isNaN(unita) ? null : unita,
-        raccomandazioni: raccomandazioni || null,
-        avvertenze_operatori: avvertenze || null
-      }
-    ]);
+    let error;
+    if (farmacoInModifica) {
+      ({ error } = await client.from('farmaci').update(dati).eq('id', farmacoInModifica.id));
+    } else {
+      ({ error } = await client.from('farmaci').insert([dati]));
+    }
 
     if (error) {
       alert('Errore durante il salvataggio del farmaco.');
@@ -187,8 +197,9 @@ window.onload = function () {
       return;
     }
 
-    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Triturabile</th><th>Nominativo</th><th>Unità/Conf.</th><th>Raccomandazioni</th><th>Avvertenze Operatori</th></tr>';
+    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Triturabile</th><th>Nominativo</th><th>Unità/Conf.</th><th>Raccomandazioni</th><th>Avvertenze Operatori</th><th>Azioni</th></tr>';
     data.forEach(f => {
+      const dataAttr = encodeURIComponent(JSON.stringify(f));
       table += `<tr>
         <td>${f.principio_attivo}</td>
         <td>${f.forma_farmaceutica || ''}</td>
@@ -197,6 +208,7 @@ window.onload = function () {
         <td>${f.unita_per_confezione || ''}</td>
         <td>${f.raccomandazioni || ''}</td>
         <td>${f.avvertenze_operatori || ''}</td>
+        <td><button onclick='showFormFarmaco(${JSON.stringify(f)})'>Modifica</button></td>
       </tr>`;
     });
     table += '</table>';
