@@ -178,9 +178,16 @@ window.onload = function () {
       return;
     }
 
-    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th></tr>';
+    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th><th>Raccomandazioni</th><th>Avvertenze Operatori</th></tr>';
     data.forEach(f => {
-      table += `<tr><td>${f.principio_attivo}</td><td>${f.forma_farmaceutica || ''}</td><td>${f.nominativo ? '✔️' : ''}</td><td>${f.unita_per_confezione || ''}</td></tr>`;
+      table += `<tr>
+        <td>${f.principio_attivo}</td>
+        <td>${f.forma_farmaceutica || ''}</td>
+        <td>${f.nominativo ? '✔️' : ''}</td>
+        <td>${f.unita_per_confezione || ''}</td>
+        <td>${f.raccomandazioni || ''}</td>
+        <td>${f.avvertenze_operatori || ''}</td>
+      </tr>`;
     });
     table += '</table>';
     container.innerHTML = table;
