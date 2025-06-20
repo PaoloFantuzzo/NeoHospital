@@ -10,11 +10,11 @@
 
   <aside class="sidebar">
     <ul>
-      <li><a href="#" onclick="navigate('home')">Home</a></li>
-      <li><a href="#" onclick="navigate('pazienti')">Anagrafica Pazienti</a></li>
-      <li><a href="#" onclick="navigate('ricoveri')">Ricoveri</a></li>
-      <li><a href="#" onclick="navigate('agenda')">Agenda</a></li>
-      <li><a href="#" onclick="navigate('farmaci')">Farmaci</a></li>
+      <li><a href="#" id="home-link">Home</a></li>
+      <li><a href="#" id="anagrafica-link">Anagrafica Pazienti</a></li>
+      <li><a href="#" id="ricoveri-link">Ricoveri</a></li>
+      <li><a href="#" id="agenda-link">Agenda</a></li>
+      <li><a href="#" id="farmaci-link">Farmaci</a></li>
     </ul>
   </aside>
 
@@ -28,6 +28,20 @@
 
   <section id="ricoveri" class="view" style="display:none">
     <h2>Ricoveri Attivi</h2>
+    <table id="tabella-ricoveri">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Reparto</th>
+          <th>Letto</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="ricoveri-body">
+        <!-- Popolamento dinamico -->
+      </tbody>
+    </table>
   </section>
 
   <section id="agenda" class="view" style="display:none">
@@ -36,6 +50,50 @@
 
   <section id="farmaci" class="view" style="display:none">
     <h2>Farmaci</h2>
+  </section>
+
+  <!-- Cartella Ricovero -->
+  <section id="cartella-ricovero" class="view" style="display:none">
+    <h2>Cartella Ricovero</h2>
+    <div class="tabs">
+      <button onclick="openScheda('scheda-anagrafica')">Anagrafica</button>
+      <button onclick="openScheda('scheda-terapia')">Terapia</button>
+      <button onclick="openScheda('scheda-parametri')">Parametri Vitali</button>
+      <button onclick="openScheda('scheda-diari')">Diari</button>
+      <button onclick="openScheda('scheda-valutazioni')">Schede di Valutazione</button>
+    </div>
+
+    <div id="scheda-anagrafica" class="scheda" style="display:none"></div>
+    <div id="scheda-terapia" class="scheda" style="display:none"></div>
+    <div id="scheda-parametri" class="scheda" style="display:none"></div>
+
+    <div id="scheda-diari" class="scheda" style="display:none">
+      <div class="sub-tabs">
+        <button onclick="openSubScheda('diario-medico')">Medico</button>
+        <button onclick="openSubScheda('diario-infermiere')">Infermiere</button>
+        <button onclick="openSubScheda('diario-fisioterapista')">Fisioterapista</button>
+        <button onclick="openSubScheda('diario-logopedista')">Logopedista</button>
+        <button onclick="openSubScheda('diario-psicologo')">Psicologo</button>
+      </div>
+      <div id="diario-medico" class="sub-scheda" style="display:none"></div>
+      <div id="diario-infermiere" class="sub-scheda" style="display:none"></div>
+      <div id="diario-fisioterapista" class="sub-scheda" style="display:none"></div>
+      <div id="diario-logopedista" class="sub-scheda" style="display:none"></div>
+      <div id="diario-psicologo" class="sub-scheda" style="display:none"></div>
+    </div>
+
+    <div id="scheda-valutazioni" class="scheda" style="display:none">
+      <div class="sub-tabs">
+        <button onclick="openSubScheda('valutazione-barthel')">Barthel</button>
+        <button onclick="openSubScheda('valutazione-brass')">Brass</button>
+        <button onclick="openSubScheda('valutazione-cadute')">Rischio Cadute</button>
+        <button onclick="openSubScheda('valutazione-braden')">Braden</button>
+      </div>
+      <div id="valutazione-barthel" class="sub-scheda" style="display:none"></div>
+      <div id="valutazione-brass" class="sub-scheda" style="display:none"></div>
+      <div id="valutazione-cadute" class="sub-scheda" style="display:none"></div>
+      <div id="valutazione-braden" class="sub-scheda" style="display:none"></div>
+    </div>
   </section>
 
   <script src="app.js"></script>
