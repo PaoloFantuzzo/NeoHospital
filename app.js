@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('DOM completamente caricato');
+
   const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
   const client = supabase.createClient(supabaseUrl, supabaseKey);
@@ -7,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let subSchedaAperta = null;
 
   window.navigate = function (page) {
+    console.log(`Navigazione a pagina: ${page}`);
     const sezioni = document.querySelectorAll(".view");
     sezioni.forEach((sec) => {
       sec.style.display = sec.id === page ? "block" : "none";
@@ -28,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   window.openScheda = function (id) {
+    console.log(`Apro scheda: ${id}`);
     if (schedaAperta) {
       document.getElementById(schedaAperta).style.display = "none";
     }
@@ -41,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   window.openSubScheda = function (id) {
+    console.log(`Apro sottoscheda: ${id}`);
     if (subSchedaAperta) {
       document.getElementById(subSchedaAperta).style.display = "none";
     }
@@ -49,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   async function loadRicoveri() {
+    console.log('Carico ricoveri da Supabase...');
     const { data, error } = await client
       .from("ricoveri")
       .select("*, paziente:anagrafica_pazienti(*)");
@@ -56,11 +62,13 @@ document.addEventListener('DOMContentLoaded', function () {
     tbody.innerHTML = "";
 
     if (error) {
+      console.error('Errore caricamento ricoveri:', error);
       tbody.innerHTML = `<tr><td colspan="5">Errore caricamento ricoveri: ${error.message}</td></tr>`;
       return;
     }
 
     if (!data || data.length === 0) {
+      console.log('Nessun ricovero trovato');
       tbody.innerHTML = "<tr><td colspan='5'>Nessun ricovero attivo</td></tr>";
       return;
     }
@@ -81,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   window.apriCartellaRicovero = function (ricovero) {
+    console.log('Apro cartella ricovero:', ricovero);
     navigate("cartella-ricovero");
 
     const anagraficaDiv = document.getElementById("scheda-anagrafica");
