@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NeoHospital</title>
   <style>
     body {
@@ -13,16 +13,18 @@
       display: flex;
     }
     nav {
-      width: 200px;
+      width: 220px;
       background-color: #1e1e1e;
       padding: 20px;
       height: 100vh;
+      box-sizing: border-box;
     }
     nav a {
       display: block;
       color: #ffffff;
       text-decoration: none;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 16px;
     }
     nav a:hover {
       color: #a78bfa;
@@ -31,36 +33,34 @@
       flex-grow: 1;
       padding: 20px;
     }
-    table {
-      border-collapse: collapse;
-    }
-    table, th, td {
-      border: 1px solid white;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-    }
   </style>
 </head>
 <body>
   <nav>
-    <a href="#" id="home-link">Home</a>
-    <a href="#" id="anagrafica-link">Anagrafica Pazienti</a>
+    <a href="#" id="home-link">🏠 Home</a>
+    <a href="#" id="anagrafica-link">👤 Anagrafica Pazienti</a>
+    <a href="#" id="ricoveri-link">🏥 Ricoveri</a>
+    <a href="#" id="terapia-link">💊 Terapia</a>
+    <a href="#" id="diario-link">📘 Diario Clinico</a>
+    <a href="#" id="parametri-link">📈 Parametri Vitali</a>
+    <a href="#" id="schede-link">📄 Schede di Valutazione</a>
+    <a href="#" id="agenda-link">🗓️ Agenda Reparto</a>
+    <a href="#" id="farmaci-link">💉 Farmaci</a>
   </nav>
   <div id="content"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="app.js"></script>
   <script>
-    document.getElementById('home-link').addEventListener('click', function (e) {
-      e.preventDefault();
-      if (typeof navigate === 'function') navigate('home');
-    });
-
-    document.getElementById('anagrafica-link').addEventListener('click', function (e) {
-      e.preventDefault();
-      if (typeof navigate === 'function') navigate('anagrafica');
-    });
+    document.getElementById('home-link').addEventListener('click', e => { e.preventDefault(); navigate('home'); });
+    document.getElementById('anagrafica-link').addEventListener('click', e => { e.preventDefault(); navigate('anagrafica'); });
+    document.getElementById('ricoveri-link').addEventListener('click', e => { e.preventDefault(); navigate('ricoveri'); });
+    document.getElementById('terapia-link').addEventListener('click', e => { e.preventDefault(); navigate('terapia'); });
+    document.getElementById('diario-link').addEventListener('click', e => { e.preventDefault(); navigate('diario'); });
+    document.getElementById('parametri-link').addEventListener('click', e => { e.preventDefault(); navigate('parametri'); });
+    document.getElementById('schede-link').addEventListener('click', e => { e.preventDefault(); navigate('schede'); });
+    document.getElementById('agenda-link').addEventListener('click', e => { e.preventDefault(); navigate('agenda'); });
+    document.getElementById('farmaci-link').addEventListener('click', e => { e.preventDefault(); navigate('farmaci'); });
   </script>
 </body>
 </html>
