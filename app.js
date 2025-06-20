@@ -92,6 +92,28 @@ window.onload = function () {
   window.annullaForm = annullaForm;
   window.navigate = navigate;
 
+  // Listener pulsanti menu
+  const links = [
+    ['home-link', 'home'],
+    ['anagrafica-link', 'anagrafica'],
+    ['ricoveri-link', 'ricoveri'],
+    ['terapia-link', 'terapia'],
+    ['diario-link', 'diario'],
+    ['parametri-link', 'parametri'],
+    ['schede-link', 'schede'],
+    ['agenda-link', 'agenda'],
+    ['farmaci-link', 'farmaci']
+  ];
+  links.forEach(([id, page]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        navigate(page);
+      });
+    }
+  });
+
   // Avvio iniziale
   navigate('home');
 };
