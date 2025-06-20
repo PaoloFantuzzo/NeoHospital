@@ -90,6 +90,8 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOM pronto, inizializzo app');
+
       const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
       const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
       const supabase = window.supabase;
@@ -99,9 +101,10 @@
       let subSchedaAperta = null;
 
       window.navigate = function (page) {
+        console.log(`Navigazione verso: ${page}`);
         const sezioni = document.querySelectorAll(".view");
-        sezioni.forEach((sec) => {
-          sec.style.display = sec.id === page ? "block" : "none";
+        sezioni.forEach(sec => {
+          sec.style.display = (sec.id === page) ? "block" : "none";
         });
 
         if (page === "ricoveri") {
@@ -120,6 +123,7 @@
       };
 
       window.openScheda = function (id) {
+        console.log(`Apro scheda: ${id}`);
         if (schedaAperta) {
           document.getElementById(schedaAperta).style.display = "none";
         }
@@ -133,6 +137,7 @@
       };
 
       window.openSubScheda = function (id) {
+        console.log(`Apro sottoscheda: ${id}`);
         if (subSchedaAperta) {
           document.getElementById(subSchedaAperta).style.display = "none";
         }
@@ -141,6 +146,7 @@
       };
 
       async function loadRicoveri() {
+        console.log('Caricamento ricoveri...');
         const { data, error } = await client
           .from("ricoveri")
           .select("*, paziente:anagrafica_pazienti(*)");
@@ -148,9 +154,5 @@
         tbody.innerHTML = "";
 
         if (error) {
-          tbody.innerHTML = `<tr><td colspan="5">Errore caricamento ricoveri: ${error.message}</td></tr>`;
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          tbody.innerHTML = "<tr><td colspan='5'>Nessun ricovero attivo</td></tr>";
+          console.error('Errore nel caricamento:', error);
+          tbody.inne
