@@ -4,20 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NeoHospital</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="app.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+    }
+    nav {
+      width: 200px;
+      background-color: #1e1e1e;
+      padding: 20px;
+      height: 100vh;
+    }
+    nav a {
+      display: block;
+      color: #ffffff;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+    nav a:hover {
+      color: #a78bfa;
+    }
+    #content {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid white;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
   <nav>
-    <h1>NeoHospital</h1>
-    <ul>
-      <li><a href="#" onclick="navigate('home')">Home</a></li>
-      <li><a href="#" onclick="navigate('anagrafica')">Anagrafica Pazienti</a></li>
-      <li><a href="#" onclick="navigate('ricoveri')">Ricoveri</a></li>
-      <li><a href="#" onclick="navigate('terapia')">Terapia</a></li>
-      <li><a href="#" onclick="navigate('diario')">Diario Clinico</a></li>
-    </ul>
+    <a href="#" id="home-link">Home</a>
+    <a href="#" id="anagrafica-link">Anagrafica Pazienti</a>
   </nav>
-  <main id="content"><h2>Caricamento...</h2></main>
+  <div id="content"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('home-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof navigate === 'function') navigate('home');
+    });
+
+    document.getElementById('anagrafica-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof navigate === 'function') navigate('anagrafica');
+    });
+  </script>
 </body>
 </html>
