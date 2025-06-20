@@ -41,3 +41,4 @@ function navigate(page) {
   }
 }
 document.addEventListener('DOMContentLoaded', () => navigate('home'));
+Funzione loadPazienti aggiunta
