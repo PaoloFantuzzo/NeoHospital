@@ -1,3 +1,6 @@
+const supabaseUrl = "https://uzukdoqaxkzprqwoudbe.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 function navigate(page) {
   const content = document.getElementById('content');
   if (page === 'home') {
