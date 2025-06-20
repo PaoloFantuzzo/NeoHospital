@@ -17,6 +17,14 @@ window.onload = function () {
         <div id="pazienti-table"><p>Caricamento dati...</p></div>
       `;
       loadPazienti();
+    } else if (page === 'farmaci') {
+      content.innerHTML = `
+        <h2>Farmaci</h2>
+        <button onclick="showFormFarmaco()" style="margin-bottom: 10px;">+ Nuovo Farmaco</button>
+        <div id="form-farmaco"></div>
+        <div id="farmaci-table"><p>Caricamento dati...</p></div>
+      `;
+      loadFarmaci();
     } else {
       content.innerHTML = `<h2>${page}</h2><p>Contenuto in costruzione...</p>`;
     }
@@ -24,7 +32,6 @@ window.onload = function () {
 
   async function loadPazienti() {
     const { data, error } = await client.from('anagrafica_pazienti').select('*');
-
     const container = document.getElementById('pazienti-table');
 
     if (error) {
@@ -43,7 +50,6 @@ window.onload = function () {
       table += `<tr><td>${p.cognome}</td><td>${p.nome}</td><td>${p.codice_fiscale}</td></tr>`;
     });
     table += '</table>';
-
     container.innerHTML = table;
   }
 
@@ -90,9 +96,88 @@ window.onload = function () {
 
   window.showFormPaziente = showFormPaziente;
   window.annullaForm = annullaForm;
+
+  function showFormFarmaco() {
+    const formHTML = `
+      <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+        <label>Nome Farmaco: <input type="text" id="nome_farmaco"></label><br><br>
+        <label>Principio Attivo: <input type="text" id="principio_attivo"></label><br><br>
+        <label>Forma Farmaceutica: <input type="text" id="forma_farmaceutica"></label><br><br>
+        <label><input type="checkbox" id="nominativo"> Nominativo (per singolo paziente)</label><br><br>
+        <label>Unità per Confezione: <input type="number" id="unita_per_confezione"></label><br><br>
+        <label>Note: <textarea id="note"></textarea></label><br><br>
+        <button onclick="salvaFarmaco()">Salva</button>
+        <button onclick="annullaFormFarmaco()">Annulla</button>
+      </div>
+    `;
+    document.getElementById('form-farmaco').innerHTML = formHTML;
+  }
+
+  function annullaFormFarmaco() {
+    document.getElementById('form-farmaco').innerHTML = '';
+  }
+
+  window.salvaFarmaco = async function () {
+    const nome = document.getElementById('nome_farmaco').value.trim();
+    const principio = document.getElementById('principio_attivo').value.trim();
+    const forma = document.getElementById('forma_farmaceutica').value.trim();
+    const nominativo = document.getElementById('nominativo').checked;
+    const unita = parseInt(document.getElementById('unita_per_confezione').value);
+    const note = document.getElementById('note').value.trim();
+
+    if (!nome) {
+      alert('Il nome del farmaco è obbligatorio.');
+      return;
+    }
+
+    const { error } = await client.from('farmaci').insert([
+      {
+        nome_farmaco: nome,
+        principio_attivo: principio || null,
+        forma_farmaceutica: forma || null,
+        nominativo,
+        unita_per_confezione: isNaN(unita) ? null : unita,
+        note: note || null
+      }
+    ]);
+
+    if (error) {
+      alert('Errore durante il salvataggio del farmaco.');
+      console.error(error);
+      return;
+    }
+
+    annullaFormFarmaco();
+    loadFarmaci();
+  }
+
+  async function loadFarmaci() {
+    const { data, error } = await client.from('farmaci').select('*');
+    const container = document.getElementById('farmaci-table');
+
+    if (error) {
+      container.innerHTML = '<p>Errore nel caricamento dati.</p>';
+      console.error(error);
+      return;
+    }
+
+    if (data.length === 0) {
+      container.innerHTML = '<p>Nessun farmaco registrato.</p>';
+      return;
+    }
+
+    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Nome</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th></tr>';
+    data.forEach(f => {
+      table += `<tr><td>${f.nome_farmaco}</td><td>${f.forma_farmaceutica || ''}</td><td>${f.nominativo ? '✔️' : ''}</td><td>${f.unita_per_confezione || ''}</td></tr>`;
+    });
+    table += '</table>';
+    container.innerHTML = table;
+  }
+
+  window.showFormFarmaco = showFormFarmaco;
+  window.annullaFormFarmaco = annullaFormFarmaco;
   window.navigate = navigate;
 
-  // Listener pulsanti menu
   const links = [
     ['home-link', 'home'],
     ['anagrafica-link', 'anagrafica'],
@@ -114,6 +199,5 @@ window.onload = function () {
     }
   });
 
-  // Avvio iniziale
   navigate('home');
 };
