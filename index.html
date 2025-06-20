@@ -52,15 +52,28 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="app.js"></script>
   <script>
-    document.getElementById('home-link').addEventListener('click', e => { e.preventDefault(); navigate('home'); });
-    document.getElementById('anagrafica-link').addEventListener('click', e => { e.preventDefault(); navigate('anagrafica'); });
-    document.getElementById('ricoveri-link').addEventListener('click', e => { e.preventDefault(); navigate('ricoveri'); });
-    document.getElementById('terapia-link').addEventListener('click', e => { e.preventDefault(); navigate('terapia'); });
-    document.getElementById('diario-link').addEventListener('click', e => { e.preventDefault(); navigate('diario'); });
-    document.getElementById('parametri-link').addEventListener('click', e => { e.preventDefault(); navigate('parametri'); });
-    document.getElementById('schede-link').addEventListener('click', e => { e.preventDefault(); navigate('schede'); });
-    document.getElementById('agenda-link').addEventListener('click', e => { e.preventDefault(); navigate('agenda'); });
-    document.getElementById('farmaci-link').addEventListener('click', e => { e.preventDefault(); navigate('farmaci'); });
+    window.onload = function () {
+      const links = [
+        ['home-link', 'home'],
+        ['anagrafica-link', 'anagrafica'],
+        ['ricoveri-link', 'ricoveri'],
+        ['terapia-link', 'terapia'],
+        ['diario-link', 'diario'],
+        ['parametri-link', 'parametri'],
+        ['schede-link', 'schede'],
+        ['agenda-link', 'agenda'],
+        ['farmaci-link', 'farmaci']
+      ];
+      links.forEach(([id, page]) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (typeof navigate === 'function') navigate(page);
+          });
+        }
+      });
+    }
   </script>
 </body>
 </html>
