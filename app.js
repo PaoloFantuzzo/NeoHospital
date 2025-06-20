@@ -3,11 +3,9 @@ window.onload = function () {
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dWtkb3FheGt6cHJxd291ZGJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMzgyNDYsImV4cCI6MjA2NTgxNDI0Nn0.-aJjM8EEOU8VSZ3xmGcG3DV75OCRSkeLgLvoipi2z8w";
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Stato attuale scheda e sottoscheda aperte
   let schedaAperta = null;
   let subSchedaAperta = null;
 
-  // Naviga tra le pagine principali
   window.navigate = function (page) {
     const sezioni = document.querySelectorAll(".view");
     sezioni.forEach((sec) => {
@@ -21,7 +19,6 @@ window.onload = function () {
     if (page === "home") {
       schedaAperta = null;
       subSchedaAperta = null;
-      // reset eventuale stato cartella
       document.getElementById("cartella-ricovero").style.display = "none";
     }
 
@@ -30,7 +27,6 @@ window.onload = function () {
     }
   };
 
-  // Apri scheda principale nella cartella ricovero
   window.openScheda = function (id) {
     if (schedaAperta) {
       document.getElementById(schedaAperta).style.display = "none";
@@ -38,14 +34,12 @@ window.onload = function () {
     schedaAperta = id;
     document.getElementById(id).style.display = "block";
 
-    // Nascondi eventuali sottoschede quando cambio scheda
     if (subSchedaAperta) {
       document.getElementById(subSchedaAperta).style.display = "none";
       subSchedaAperta = null;
     }
   };
 
-  // Apri sottoscheda nelle schede Diari o Valutazioni
   window.openSubScheda = function (id) {
     if (subSchedaAperta) {
       document.getElementById(subSchedaAperta).style.display = "none";
@@ -54,9 +48,10 @@ window.onload = function () {
     document.getElementById(id).style.display = "block";
   };
 
-  // Carica elenco ricoveri da Supabase
   async function loadRicoveri() {
-    const { data, error } = await client.from("ricoveri").select("*, paziente:anagrafica_pazienti(*)");
+    const { data, error } = await client
+      .from("ricoveri")
+      .select("*, paziente:anagrafica_pazienti(*)");
     const tbody = document.getElementById("ricoveri-body");
     tbody.innerHTML = "";
 
@@ -77,17 +72,17 @@ window.onload = function () {
         <td>${ricovero.paziente.cognome}</td>
         <td>${ricovero.reparto || ""}</td>
         <td>${ricovero.stanza || ""} / ${ricovero.letto || ""}</td>
-        <td><button onclick='apriCartellaRicovero(${JSON.stringify(ricovero).replace(/'/g, "\\'")})'>Apri</button></td>
+        <td><button onclick='apriCartellaRicovero(${JSON.stringify(
+          ricovero
+        ).replace(/'/g, "\\'")})'>Apri</button></td>
       `;
       tbody.appendChild(riga);
     });
   }
 
-  // Apri cartella ricovero con i dettagli
   window.apriCartellaRicovero = function (ricovero) {
     navigate("cartella-ricovero");
 
-    // Visualizza dati anagrafica
     const anagraficaDiv = document.getElementById("scheda-anagrafica");
     anagraficaDiv.innerHTML = `
       <p><strong>Nome:</strong> ${ricovero.paziente.nome}</p>
@@ -98,14 +93,11 @@ window.onload = function () {
       <p><strong>Letto:</strong> ${ricovero.letto || ""}</p>
     `;
 
-    // Apri scheda Anagrafica come default
     openScheda("scheda-anagrafica");
   };
 
-  // Avvio con pagina Home
   navigate("home");
 
-  // Link menù laterale
   const links = [
     ["home-link", "home"],
     ["anagrafica-link", "pazienti"],
