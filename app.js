@@ -100,12 +100,24 @@ window.onload = function () {
   function showFormFarmaco() {
     const formHTML = `
       <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
-        <label>Nome Farmaco: <input type="text" id="nome_farmaco"></label><br><br>
         <label>Principio Attivo: <input type="text" id="principio_attivo"></label><br><br>
-        <label>Forma Farmaceutica: <input type="text" id="forma_farmaceutica"></label><br><br>
+        <label>Forma Farmaceutica: 
+          <select id="forma_farmaceutica">
+            <option value="">-- Seleziona --</option>
+            <option value="cpr">cpr</option>
+            <option value="cps">cps</option>
+            <option value="gtt">gtt</option>
+            <option value="cpr orodispersibile">cpr orodispersibile</option>
+            <option value="fl">fl</option>
+            <option value="flac">flac</option>
+            <option value="supp">supp</option>
+            <option value="cerotto">cerotto</option>
+          </select>
+        </label><br><br>
         <label><input type="checkbox" id="nominativo"> Nominativo (per singolo paziente)</label><br><br>
         <label>Unità per Confezione: <input type="number" id="unita_per_confezione"></label><br><br>
-        <label>Note: <textarea id="note"></textarea></label><br><br>
+        <label>Raccomandazioni: <textarea id="raccomandazioni"></textarea></label><br><br>
+        <label>Avvertenze per Operatori: <textarea id="avvertenze_operatori"></textarea></label><br><br>
         <button onclick="salvaFarmaco()">Salva</button>
         <button onclick="annullaFormFarmaco()">Annulla</button>
       </div>
@@ -118,26 +130,26 @@ window.onload = function () {
   }
 
   window.salvaFarmaco = async function () {
-    const nome = document.getElementById('nome_farmaco').value.trim();
     const principio = document.getElementById('principio_attivo').value.trim();
-    const forma = document.getElementById('forma_farmaceutica').value.trim();
+    const forma = document.getElementById('forma_farmaceutica').value;
     const nominativo = document.getElementById('nominativo').checked;
     const unita = parseInt(document.getElementById('unita_per_confezione').value);
-    const note = document.getElementById('note').value.trim();
+    const raccomandazioni = document.getElementById('raccomandazioni').value.trim();
+    const avvertenze = document.getElementById('avvertenze_operatori').value.trim();
 
-    if (!nome) {
-      alert('Il nome del farmaco è obbligatorio.');
+    if (!principio) {
+      alert('Il principio attivo è obbligatorio.');
       return;
     }
 
     const { error } = await client.from('farmaci').insert([
       {
-        nome_farmaco: nome,
-        principio_attivo: principio || null,
+        principio_attivo: principio,
         forma_farmaceutica: forma || null,
         nominativo,
         unita_per_confezione: isNaN(unita) ? null : unita,
-        note: note || null
+        raccomandazioni: raccomandazioni || null,
+        avvertenze_operatori: avvertenze || null
       }
     ]);
 
@@ -166,9 +178,9 @@ window.onload = function () {
       return;
     }
 
-    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Nome</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th></tr>';
+    let table = '<table border="1" style="width:100%;margin-top:20px;"><tr><th>Principio Attivo</th><th>Forma</th><th>Nominativo</th><th>Unità/Conf.</th></tr>';
     data.forEach(f => {
-      table += `<tr><td>${f.nome_farmaco}</td><td>${f.forma_farmaceutica || ''}</td><td>${f.nominativo ? '✔️' : ''}</td><td>${f.unita_per_confezione || ''}</td></tr>`;
+      table += `<tr><td>${f.principio_attivo}</td><td>${f.forma_farmaceutica || ''}</td><td>${f.nominativo ? '✔️' : ''}</td><td>${f.unita_per_confezione || ''}</td></tr>`;
     });
     table += '</table>';
     container.innerHTML = table;
